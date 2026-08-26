@@ -1,4 +1,3 @@
-import numpy as np
 import pytest
 from src.analytics.metrics import (
     compute_cagr,

@@ -1,6 +1,13 @@
 import pandas as pd
-from src.analytics.metrics import compute_free_cash_flow, compute_ocf_to_net_profit
-from src.analytics.ratios import compute_pe_ratio, compute_pb_ratio, compute_roe
+from src.analytics.metrics import (
+    compute_free_cash_flow,
+    compute_ocf_to_net_profit,
+)
+from src.analytics.ratios import (
+    compute_pe_ratio,
+    compute_pb_ratio,
+    compute_roe,
+)
 from src.etl.loader import load_raw_data
 from src.etl.normaliser import normalise_financial_data
 from src.etl.validator import validate_financial_data
@@ -27,7 +34,8 @@ def process_financial_pipeline(raw_df: pd.DataFrame) -> pd.DataFrame:
 
     if "net_income" in norm_df.columns and "shareholder_equity" in norm_df.columns:
         norm_df["roe"] = norm_df.apply(
-            lambda r: compute_roe(r["net_income"], r["shareholder_equity"]), axis=1
+            lambda r: compute_roe(r["net_income"], r["shareholder_equity"]),
+            axis=1,
         )
 
     if "operating_cash_flow" in norm_df.columns and "capex" in norm_df.columns:

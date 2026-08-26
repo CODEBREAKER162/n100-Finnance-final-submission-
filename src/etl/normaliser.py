@@ -1,4 +1,3 @@
-import re
 import pandas as pd
 
 
@@ -27,11 +26,13 @@ def clean_financial_data(data):
 
 def normalise_financial_data(df: pd.DataFrame) -> pd.DataFrame:
     """Normalizes financial column names and formats for DataFrames."""
-    if df is None or getattr(df, 'empty', False):
+    if df is None or getattr(df, "empty", False):
         return pd.DataFrame() if df is None else df.copy()
 
     df_clean = df.copy()
-    df_clean.columns = [str(c).strip().lower().replace(" ", "_") for c in df_clean.columns]
+    df_clean.columns = [
+        str(c).strip().lower().replace(" ", "_") for c in df_clean.columns
+    ]
     return df_clean
 
 

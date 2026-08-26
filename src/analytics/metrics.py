@@ -67,9 +67,7 @@ def compute_sortino_ratio(
     if downside_deviation == 0 or np.isnan(downside_deviation):
         return None
 
-    sortino = (np.mean(excess_returns) / downside_deviation) * np.sqrt(
-        periods_per_year
-    )
+    sortino = (np.mean(excess_returns) / downside_deviation) * np.sqrt(periods_per_year)
     return float(sortino)
 
 
@@ -80,7 +78,9 @@ def compute_free_cash_flow(operating_cash_flow: float, capex: float) -> float | 
     return operating_cash_flow - capex
 
 
-def compute_ocf_to_net_profit(operating_cash_flow: float, net_profit: float) -> float | None:
+def compute_ocf_to_net_profit(
+    operating_cash_flow: float, net_profit: float
+) -> float | None:
     """Calculates Operating Cash Flow to Net Profit ratio."""
     if operating_cash_flow is None or net_profit is None or net_profit == 0:
         return None
