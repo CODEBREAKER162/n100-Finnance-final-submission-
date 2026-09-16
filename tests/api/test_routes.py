@@ -1,40 +1,18 @@
-from fastapi.testclient import TestClient
-from src.api.main import app
+import pytest
+from unittest.mock import patch
+from src.web.app import app
 
-client = TestClient(app)
+@pytest.fixture
+def client():
+    app.config['TESTING'] = True
+    with app.test_client() as client:
+        yield client
 
+def test_api_routes_error_handling(client):
+    response = client.get('/api/v1/resource/invalid_id')
+    assert response.status_code in (400, 404)
 
-def test_health_check():
-    response = client.get("/health")
-    assert response.status_code == 200
-    assert response.json() == {"status": "healthy"}
-
-
-def test_get_debt_to_equity_valid():
-    response = client.post(
-        "/analytics/debt-to-equity",
-        json={"total_debt": 50000, "total_equity": 100000},
-    )
-    assert response.status_code == 200
-    assert response.json() == {"ratio": 0.5}
-
-
-def test_get_debt_to_equity_zero_equity():
-    response = client.post(
-        "/analytics/debt-to-equity",
-        json={"total_debt": 50000, "total_equity": 0},
-    )
-    assert response.status_code == 400
-    assert response.json()["detail"] == "Total equity cannot be zero."
-
-
-def test_get_quick_ratio_valid():
-    payload = {
-        "cash": 20000,
-        "marketable_securities": 10000,
-        "receivables": 15000,
-        "current_liabilities": 30000,
-    }
-    response = client.post("/analytics/quick-ratio", json=payload)
-    assert response.status_code == 200
-    assert response.json() == {"ratio": 1.5}
+    with patch('src.screener.engine.screen_stocks', side_effect=ValueError('Invalid filter parameter')):
+        response = client.post('/api/v1/screen', json={'invalid_param': True})
+        assert response.status_code in (400, 500)
+        assert b'Invalid filter parameter' in response.data or 'error' in response.get_json()

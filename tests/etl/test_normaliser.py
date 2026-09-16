@@ -31,3 +31,4 @@ def test_clean_financial_data_unsupported_type():
 def test_normalise_financial_data_empty():
     assert normalise_financial_data(None).empty
     assert normalise_financial_data(pd.DataFrame()).empty
+
